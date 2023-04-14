@@ -2,6 +2,7 @@ import axios from 'axios';
 import simpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import ApiService from './js/api-service';
+import BtnLoadMore from './js/btn-load-more';
 
 const apiService = new ApiService();
 
@@ -9,23 +10,43 @@ const refs = {
   form: document.querySelector('#search-form'),
   gallery: document.querySelector('.gallery'),
   btnLoadMore: document.querySelector('.load-more'),
+  endText: document.querySelector('.end__text'),
 };
 
+const btnLoadMore = new BtnLoadMore({
+  selector: '.load-more',
+  hidden: true,
+});
+
 refs.form.addEventListener('submit', onFormSubmit);
-refs.btnLoadMore.addEventListener('click', onLoadMore);
+btnLoadMore.refs.btn.addEventListener('click', fetchCards);
 
 function onFormSubmit(e) {
   e.preventDefault();
 
-  apiService.searchQuery = e.currentTarget.elements.searchQuery.value;
+  apiService.searchQuery = e.currentTarget.elements.searchQuery.value.trim();
 
+  if (apiService.searchQuery === '') {
+    return alert('Please write some values in input');
+  }
+
+  btnLoadMore.show();
   apiService.resetPage();
+  clearGalleryMarkup();
 
-  apiService.fetchGallery().then(createGalleryMarkup);
+  fetchCards();
 }
 
-function onLoadMore() {
-  apiService.fetchGallery().then(createGalleryMarkup);
+// function onLoadMore() {
+//   fetchCards();
+// }
+
+function fetchCards() {
+  btnLoadMore.disable();
+  apiService.fetchGallery().then(cards => {
+    createGalleryMarkup(cards);
+    btnLoadMore.enable();
+  });
 }
 
 function createGalleryMarkup(cards) {
@@ -63,4 +84,8 @@ function createGalleryMarkup(cards) {
       )
       .join('')
   );
+}
+
+function clearGalleryMarkup() {
+  refs.gallery.innerHTML = '';
 }
