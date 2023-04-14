@@ -81,12 +81,14 @@ svg {
 
 .photo-card > a {
   height: 100%;
-  background-color: rgb(252, 236, 156);
+  background-color: rgb(254, 254, 254);
   text-decoration: none;
-  color: rgb(240, 0, 0);
+  color: rgb(162, 13, 60);
 }
 
 .info {
+  text-align: start;
+  padding-left: 35px;
   border-top: 1px solid black;
 }
 
